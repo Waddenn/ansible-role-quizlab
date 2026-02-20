@@ -14,11 +14,11 @@ Role Ansible portable pour deployer l'application Node.js `quiz-ansible` depuis 
 
 ```yaml
 ---
-- name: Tester le role ansible-role-quizlab
+- name: Tester le role Waddenn.quizlab
   hosts: all
   become: true
   roles:
-    - ansible-role-quizlab
+    - Waddenn.quizlab
 ```
 
 ## Test
