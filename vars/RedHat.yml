@@ -1,0 +1,6 @@
+---
+quiz_prereq_packages:
+  - git
+  - procps-ng
+quiz_nodesource_setup_cmd: "curl -fsSL https://rpm.nodesource.com/setup_{{ quiz_node_major }}.x | bash -"
+quiz_nodesource_repo_file: /etc/yum.repos.d/nodesource-nodejs.repo

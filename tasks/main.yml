@@ -1,0 +1,73 @@
+---
+- name: Charger les variables par famille OS
+  ansible.builtin.include_vars: "{{ ansible_os_family }}.yml"
+
+- name: Mettre a jour le cache apt (Debian)
+  ansible.builtin.apt:
+    update_cache: true
+    cache_valid_time: 3600
+  when: ansible_os_family == "Debian"
+
+- name: Mettre a jour le cache dnf (RedHat)
+  ansible.builtin.dnf:
+    update_cache: true
+  when: ansible_os_family == "RedHat"
+
+- name: Installer les prerequis
+  ansible.builtin.package:
+    name: "{{ quiz_prereq_packages }}"
+    state: present
+
+- name: Configurer le depot NodeSource
+  ansible.builtin.shell: "{{ quiz_nodesource_setup_cmd }}"
+  args:
+    creates: "{{ quiz_nodesource_repo_file }}"
+
+- name: Installer Node.js
+  ansible.builtin.package:
+    name: nodejs
+    state: present
+
+- name: Cloner l'application quiz-ansible
+  ansible.builtin.git:
+    repo: "{{ quiz_repo_url }}"
+    dest: "{{ quiz_app_dir }}"
+    version: "{{ quiz_repo_version }}"
+    update: true
+  register: quiz_git
+
+- name: Installer les dependances npm
+  ansible.builtin.command: npm install
+  args:
+    chdir: "{{ quiz_app_dir }}"
+  when: quiz_git.changed
+
+- name: Builder l'application
+  ansible.builtin.command: npm run build
+  args:
+    chdir: "{{ quiz_app_dir }}"
+  when: quiz_git.changed
+
+- name: Verifier si serve est deja installe globalement
+  ansible.builtin.command: npm list -g serve --depth=0
+  register: quiz_serve_check
+  changed_when: false
+  failed_when: false
+
+- name: Installer serve globalement
+  ansible.builtin.command: npm install -g serve
+  when: quiz_serve_check.rc != 0
+
+- name: Demarrer quiz-ansible si non lance
+  ansible.builtin.shell: |
+    ss -lnt | grep -q ":{{ quiz_port }} " || \
+    setsid /usr/bin/serve -s dist -l {{ quiz_port }} >{{ quiz_log_file }} 2>&1 < /dev/null &
+  args:
+    chdir: "{{ quiz_app_dir }}"
+  changed_when: false
+
+- name: Attendre que quiz-ansible ecoute sur le port
+  ansible.builtin.wait_for:
+    host: 127.0.0.1
+    port: "{{ quiz_port }}"
+    timeout: 30

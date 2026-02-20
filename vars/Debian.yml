@@ -1,0 +1,7 @@
+---
+quiz_prereq_packages:
+  - curl
+  - git
+  - procps
+quiz_nodesource_setup_cmd: "curl -fsSL https://deb.nodesource.com/setup_{{ quiz_node_major }}.x | bash -"
+quiz_nodesource_repo_file: /etc/apt/sources.list.d/nodesource.list

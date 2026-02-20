@@ -1,0 +1,7 @@
+---
+quiz_repo_url: https://gitlab.com/ftutorials-labs/quiz-ansible.git
+quiz_repo_version: HEAD
+quiz_app_dir: /opt/quiz-ansible
+quiz_port: 3000
+quiz_node_major: "23"
+quiz_log_file: /tmp/quiz-ansible-role.log

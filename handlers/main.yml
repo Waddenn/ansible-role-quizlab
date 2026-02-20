@@ -1,0 +1,7 @@
+---
+- name: Relancer quiz-ansible
+  ansible.builtin.shell: |
+    pkill -f "[s]erve -s dist -l {{ quiz_port }}" || true
+    setsid /usr/bin/serve -s dist -l {{ quiz_port }} >{{ quiz_log_file }} 2>&1 < /dev/null &
+  args:
+    chdir: "{{ quiz_app_dir }}"
