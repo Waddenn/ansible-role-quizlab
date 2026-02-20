@@ -27,12 +27,3 @@ Role Ansible portable pour deployer l'application Node.js `quiz-ansible` depuis 
 cd projet
 ansible-playbook -i inventaire playbooks/ansible-role-quizlab.yaml
 ```
-
-## Publication sur Ansible Galaxy
-
-1. Creer le depot GitHub public du role (nom recommande: `ansible-role-quizlab`).
-2. Pousser le role dans ce depot.
-3. Se connecter a https://galaxy.ansible.com via compte GitHub.
-4. Importer le role depuis l'interface Galaxy (My Content > Add Content > Import Role).
-5. Verifier que `meta/main.yml` est present et correct (platforms, tags, license).
-
